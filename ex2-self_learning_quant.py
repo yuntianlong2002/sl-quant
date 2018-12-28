@@ -10,6 +10,23 @@ from matplotlib import pyplot as plt
 
 from sklearn import metrics, preprocessing
 
+import sys
+sys.path.append('../crypto_index/')
+
+import cqt
+import cqt.env.mkt_env as env
+import cqt.env.mkt_env_spot as envspot
+import cqt.ledger.ledger as ledger
+import cqt.strats.strategy as stg
+import pandas as pd
+import pickle
+
+from datetime import datetime
+from datetime import timedelta
+import matplotlib.pyplot as plt
+
+import os
+
 '''
 Name:        The Self Learning Quant, Example 2
 
@@ -38,17 +55,17 @@ def load_data():
 
 #Initialize first state, all items are placed deterministically
 def init_state(data):
-    
+
     close = data
     diff = np.diff(data)
     diff = np.insert(diff, 0, 0)
-    
+
     #--- Preprocess data
     xdata = np.column_stack((close, diff))
     xdata = np.nan_to_num(xdata)
     scaler = preprocessing.StandardScaler()
     xdata = scaler.fit_transform(xdata)
-    
+
     state = xdata[0:1, :]
     return state, xdata
 
@@ -56,10 +73,10 @@ def init_state(data):
 def take_action(state, xdata, action, signal, time_step):
     #this should generate a list of trade signals that at evaluation time are fed to the backtester
     #the backtester should get a list of trade signals and a list of price data for the assett
-    
+
     #make necessary adjustments to state and then return it
     time_step += 1
-    
+
     #if the current iteration is the last state ("terminal state") then set terminal_state to 1
     if time_step == xdata.shape[0]:
         state = xdata[time_step-1:time_step, :]
